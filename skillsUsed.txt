@@ -1,0 +1,8 @@
+Clean Code
+PostgreSQL Database Engineering
+Performance Optimization
+Security best practices
+Tailwind best practices
+Vercel deployment
+Web Access
+supabase postgres best practices

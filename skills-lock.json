@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "skills": {
+    "clean-code": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/clean-code/SKILL.md",
+      "computedHash": "551e1ac1c416d9df11fce8bc613c3595794f1f5e634d20c5b3e257afded11ed7"
+    },
+    "performance-optimization": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/performance-optimization/SKILL.md",
+      "computedHash": "e143bfc3b19f8009b3399bdd96deba13e4edb6cdbd9f7f30b570ba5ea49e3613"
+    },
+    "postgresql-database-engineering": {
+      "source": "manutej/luxor-claude-marketplace",
+      "sourceType": "github",
+      "skillPath": "plugins/luxor-database-pro/skills/postgresql-database-engineering/SKILL.md",
+      "computedHash": "6039063ea5257f77ff0797f08074d3ec40da34ca8f412d8af5b194b9b6db0e89"
+    },
+    "security-best-practices": {
+      "source": "openai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/security-best-practices/SKILL.md",
+      "computedHash": "0c42fff660b6f7e85add36437edc36976466bb254b7cd9eb38ec67b2ad64a9bf"
+    },
+    "supabase-postgres-best-practices": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/supabase-postgres-best-practices/SKILL.md",
+      "computedHash": "0c0c8712d840922143fe945c41d3181d99fef2819d53d5b075a42cf0153288c0"
+    },
+    "tailwind-best-practices": {
+      "source": "mastra-ai/mastra",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/tailwind-best-practices/SKILL.md",
+      "computedHash": "b5720fe165b13c35122f15fa78cea523e9dda48e666fcc71daf1ba71827f0386"
+    },
+    "vercel-deployment": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-deployment/SKILL.md",
+      "computedHash": "6a17da4f0072cc4f1d29b728d3a748c1e1e22cdc3c44188aa563aafc646e47cf"
+    },
+    "web-access": {
+      "source": "eze-is/web-access",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "eea54461d11015f68b2e2c5865fe41d627b8d21f1a058b7ca5550f69f3d5922f"
+    }
+  }
+}

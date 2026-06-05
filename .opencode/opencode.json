@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": {
+      "C:/Users/tbc21/OneDrive/Desktop/Vasu/PERSONAL/client_dashboard/.opencode/gsd-core/*": "allow"
+    },
+    "external_directory": {
+      "C:/Users/tbc21/OneDrive/Desktop/Vasu/PERSONAL/client_dashboard/.opencode/gsd-core/*": "allow"
+    }
+  }
+}
