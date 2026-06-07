@@ -2,7 +2,7 @@
 
 1. User logs in via Supabase Auth.
 2. Session stored securely.
-3. Fetch user role from users table.
+3. Extract user role from JWT claims (`auth.jwt()->'app_metadata'->>'role'`).
 4. Redirect:
    - Admin → Full dashboard
    - User → Restricted dashboard
