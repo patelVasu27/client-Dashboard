@@ -1,7 +1,7 @@
 import { supabase } from '../supabaseClient';
 
 const CLIENT_SELECT_FIELDS = [
-  'id', 'buyer_name', 'phone', 'email', 'created_at', 'notes',
+  'id', 'buyer_name', 'phone', 'created_at', 'notes',
   'rate', 'quantity_value', 'quantity_type', 'site_location', 'created_by',
 ];
 
@@ -42,16 +42,57 @@ export const fetchClients = async ({ filters = {}, page = 0, pageSize = 20 } = {
     .range(from, to);
 
   if (error) {
-    throw new Error('Could not retrieve clients.');
+    console.error('fetchClients error:', error);
+    throw new Error(`Could not retrieve clients: ${error.message}`);
   }
 
   return { data, count: count || 0 };
 };
 
+export const addClient = async (clientData) => {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    console.error('[addClient] getUser failed:', userError);
+    throw new Error('Authentication error. Please sign in again.');
+  }
+
+  if (!user) {
+    console.error('[addClient] No authenticated user');
+    throw new Error('User not authenticated. Please sign in to create clients.');
+  }
+
+  const authUserId = user.id;
+  console.log('[addClient] Authenticated user ID:', authUserId);
+
+  const payload = {
+    ...clientData,
+    created_by: authUserId,
+  };
+
+  console.log('[addClient] Insert payload:', payload);
+
+  const { data, error } = await supabase
+    .from('clients')
+    .insert(payload)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('[addClient] Insert failed:', { error, payload, authUserId });
+    if (error.code === '42501' || error.message.includes('row-level security')) {
+      throw new Error('Permission denied. You can only create clients for your own account.');
+    }
+    throw new Error(`Failed to create client: ${error.message}`);
+  }
+
+  console.log('[addClient] Client created successfully:', data);
+  return data;
+};
+
 export const updateClient = async (clientId, updates, lastKnownUpdate) => {
-  // Basic validation
-  if (!updates.buyer_name || !updates.email || !updates.phone) {
-    throw new Error('Name, Email, and Phone are required.');
+  if (!updates.buyer_name || !updates.phone) {
+    throw new Error('Name and Phone are required.');
   }
 
   const { data, error } = await supabase
@@ -68,6 +109,7 @@ export const updateClient = async (clientId, updates, lastKnownUpdate) => {
     if (error.code === 'PGRST116') {
       throw new Error('Stale data detected or record not found. Please refresh and try again.');
     }
+    console.error('updateClient error:', error);
     throw new Error(error.message);
   }
 
@@ -76,4 +118,18 @@ export const updateClient = async (clientId, updates, lastKnownUpdate) => {
   }
 
   return data;
+};
+
+export const deleteClient = async (clientId) => {
+  const { error } = await supabase
+    .from('clients')
+    .delete()
+    .eq('id', clientId);
+
+  if (error) {
+    console.error('deleteClient error:', error);
+    throw new Error(`Failed to delete client: ${error.message}`);
+  }
+
+  return true;
 };

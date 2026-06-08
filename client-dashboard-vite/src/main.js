@@ -1,14 +1,22 @@
 import './style.css';
 import { initAuth, guardPage, logout } from './auth.js';
-import { fetchClients } from './services/clientService.js';
+import { fetchClients, addClient } from './services/clientService.js';
 import { buildFilterPanel } from './filterPanel.js';
 import { buildClientCard } from './clientCard.js';
 import { buildEmptyState } from './emptyState.js';
 import { createContainerState } from './utils/asyncUtils.js';
+import { openAddClientModal } from './addClientModal.js';
 
 async function buildDashboard(authSnapshot) {
   const app = document.getElementById('app');
   app.replaceChildren();
+
+  console.log('DEBUG authSnapshot:', {
+    role: authSnapshot.role,
+    user: authSnapshot.user,
+    userId: authSnapshot.user?.id,
+    session: authSnapshot.session?.user?.id
+  });
 
   const isAdmin = authSnapshot.role === 'Admin';
   const authUser = authSnapshot.user;
@@ -23,10 +31,14 @@ async function buildDashboard(authSnapshot) {
       <div class="flex justify-between h-16 items-center">
         <div class="flex items-center space-x-3">
           <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">T</div>
-          <span class="text-xl font-bold text-gray-900 tracking-tight">TriconBill Care</span>
+          <span class="text-xl font-bold text-gray-900 tracking-tight">Trycon Builtcare</span>
         </div>
         <div class="flex items-center space-x-4">
-          <span class="hidden sm:inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold uppercase tracking-wider">${authSnapshot.role}</span>
+          <span class="hidden sm:inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold uppercase tracking-wider">${authSnapshot.role || 'User'}</span>
+          <button id="add-client-btn" class="hidden sm:inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>Register New Client</span>
+          </button>
           <button id="logout-btn" class="text-gray-500 hover:text-red-600 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
           </button>
@@ -36,6 +48,7 @@ async function buildDashboard(authSnapshot) {
   `;
   wrapper.appendChild(nav);
   wrapper.querySelector('#logout-btn').onclick = logout;
+  wrapper.querySelector('#add-client-btn').onclick = () => openAddClientModal(handleAddClientSuccess);
 
   const content = document.createElement('div');
   content.className = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full';
@@ -102,11 +115,44 @@ async function buildDashboard(authSnapshot) {
       const kind = hasActiveFilters ? 'noFilterResults' : 'noRecords';
       const onAction = hasActiveFilters
         ? () => filterPanel.reset()
-        : undefined;
+        : () => openAddClientModal(handleAddClientSuccess);
       clientListContainer.appendChild(buildEmptyState(kind, onAction));
       return;
     }
-    clients.forEach(c => clientListContainer.appendChild(buildClientCard(c, isAdmin, authUser?.id)));
+    clients.forEach(c => clientListContainer.appendChild(buildClientCard(c, isAdmin, authUser?.id, handleDeleteClient)));
+  }
+
+  function handleDeleteClient(deletedClientId) {
+    const card = clientListContainer.querySelector(`[data-client-id="${deletedClientId}"]`);
+    if (card) {
+      card.style.transition = 'opacity 0.3s, transform 0.3s';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        card.remove();
+        totalCount--;
+        updatePaginationUI();
+        if (clientListContainer.children.length === 0) {
+          const kind = hasActiveFilters ? 'noFilterResults' : 'noRecords';
+          const onAction = hasActiveFilters
+            ? () => filterPanel.reset()
+            : () => openAddClientModal(handleAddClientSuccess);
+          clientListContainer.appendChild(buildEmptyState(kind, onAction));
+        }
+      }, 300);
+    }
+  }
+
+  function handleAddClientSuccess(newClient) {
+    currentPage = 0;
+    containerState.start('Loading clients...');
+    fetchClients({ page: currentPage, pageSize })
+      .then(({ data, count }) => {
+        totalCount = count;
+        renderClients(data);
+        updatePaginationUI();
+      })
+      .catch(err => containerState.fail(err.message));
   }
 
   // Filter Panel Integration

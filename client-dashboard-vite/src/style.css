@@ -1,25 +1,28 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 .client-card {
   perspective: 1000px;
+  transform-style: preserve-3d;
 }
 
 .card-inner {
   transform-style: preserve-3d;
   will-change: transform;
+  transition: transform 0.5s;
 }
 
-.client-card.is-flipped .card-inner {
-  transform: rotateY(180deg);
-}
-
-.card-front, .card-back {
+.card-front,
+.card-back {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  position: absolute;
+  inset: 0;
 }
 
 .card-back {
+  transform: rotateY(180deg);
+}
+
+.client-card .rotate-y-180 {
   transform: rotateY(180deg);
 }

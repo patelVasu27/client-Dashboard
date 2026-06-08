@@ -1,4 +1,4 @@
-import { updateClient } from './services/clientService.js';
+import { updateClient, deleteClient } from './services/clientService.js';
 import { openEditModal } from './editModal.js';
 import { createInlineError, preventDuplicate } from './utils/asyncUtils.js';
 
@@ -7,7 +7,6 @@ function buildInfoItems(client) {
     { label: 'Location', value: client.site_location },
     { label: 'Rate', value: `₹${client.rate}/${client.quantity_type}` },
     { label: 'Quantity', value: `${client.quantity_value} ${client.quantity_type}` },
-    { label: 'Email', value: client.email },
   ];
 }
 
@@ -76,14 +75,16 @@ function createNotesContent(client, canEdit) {
   return container;
 }
 
-export function buildClientCard(client, isAdmin, currentUserId) {
+export function buildClientCard(client, isAdmin, currentUserId, onDelete) {
   const canEdit = isAdmin || client.created_by === currentUserId;
+  
   const card = document.createElement('div');
-  card.className = 'group perspective-1000 h-[320px] w-full';
+  card.className = 'client-card perspective-1000 h-[320px] w-full';
+  card.dataset.clientId = client.id;
 
   const inner = document.createElement('div');
   inner.className =
-    'relative w-full h-full transition-transform duration-500 preserve-3d group-hover:rotate-y-180';
+    'card-inner relative w-full h-full transition-transform duration-500 preserve-3d';
 
   const updateCardContent = (updatedClient) => {
     // Update local client object
@@ -96,7 +97,7 @@ export function buildClientCard(client, isAdmin, currentUserId) {
 
   const front = document.createElement('div');
   front.className =
-    'absolute inset-0 backface-hidden bg-white rounded-xl shadow-md p-6 flex flex-col border border-gray-100';
+    'card-front absolute inset-0 backface-hidden bg-white rounded-xl shadow-md p-6 flex flex-col border border-gray-100';
 
   const renderFront = () => {
     front.replaceChildren();
@@ -143,7 +144,7 @@ export function buildClientCard(client, isAdmin, currentUserId) {
 
   const back = document.createElement('div');
   back.className =
-    'absolute inset-0 backface-hidden rotate-y-180 bg-gray-50 rounded-xl shadow-md p-6 flex flex-col items-center justify-center space-y-4 border border-gray-200';
+    'card-back absolute inset-0 bg-gray-50 rounded-xl shadow-md p-6 flex flex-col items-center justify-center space-y-4 border border-gray-200';
 
   const renderBack = () => {
     back.replaceChildren();
@@ -155,15 +156,39 @@ export function buildClientCard(client, isAdmin, currentUserId) {
 
     back.appendChild(editBtn);
 
-    if (isAdmin) {
+    if (canEdit) {
       const deleteBtn = document.createElement('button');
       deleteBtn.className =
         'w-full py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg font-medium hover:bg-red-100 transition-colors cursor-pointer';
       deleteBtn.textContent = 'Delete Client';
-      deleteBtn.onclick = () => console.log('Delete', client.id);
+      deleteBtn.onclick = async () => {
+        if (!confirm('Are you sure you want to delete this client?')) return;
+        
+        try {
+          await deleteClient(client.id);
+          if (onDelete) onDelete(client.id);
+        } catch (err) {
+          alert(`Failed to delete: ${err.message}`);
+        }
+      };
       back.appendChild(deleteBtn);
     }
   };
+
+  let isFlipped = false;
+
+  const flipCard = () => {
+    isFlipped = !isFlipped;
+    inner.classList.toggle('rotate-y-180');
+  };
+
+  card.addEventListener('click', (e) => {
+    const target = e.target;
+    if (target.closest('button') || target.closest('textarea') || target.closest('input') || target.closest('select')) {
+      return;
+    }
+    flipCard();
+  });
 
   renderFront();
   renderBack();

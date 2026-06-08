@@ -1,8 +1,8 @@
-# Vision — TriconBill Care Client Dashboard
+# Vision — TRYCON BUILT CARE Client Dashboard
 
 ## Purpose
 
-Build a secure, responsive web-based client dashboard for TriconBill Care to manage client contracts efficiently.
+Build a secure, responsive web-based client dashboard for TRYCON BUILT CARE to manage client contracts efficiently.
 
 ## Target Users
 

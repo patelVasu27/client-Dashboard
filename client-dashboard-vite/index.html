@@ -3,14 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TriconBill Care</title>
+    <title>TRYCON BUILT CARE</title>
     <style>
       /* =========================================================
          Auth-loading shield — prevents any UI flash before the
          auth guard resolves. The body starts with .auth-loading.
          The guard removes the class once the user is authorized.
          ========================================================= */
-      body.auth-loading { overflow: hidden; }
+      body.auth-loading {
+        overflow: hidden;
+      }
 
       #auth-shield {
         position: fixed;
@@ -22,8 +24,12 @@
         background-color: #f3f4f6;
       }
 
-      body.auth-loading #auth-shield { display: flex; }
-      body.auth-loading #app { display: none; }
+      body.auth-loading #auth-shield {
+        display: flex;
+      }
+      body.auth-loading #app {
+        display: none;
+      }
     </style>
   </head>
   <body class="auth-loading">

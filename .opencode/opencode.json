@@ -7,5 +7,17 @@
     "external_directory": {
       "C:/Users/tbc21/OneDrive/Desktop/Vasu/PERSONAL/client_dashboard/.opencode/gsd-core/*": "allow"
     }
+  },
+  "mcp": {
+    "composio": {
+      "type": "remote",
+      "url": "https://connect.composio.dev/mcp",
+      "enabled": true
+    },
+    "supabase": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp",
+      "enabled": true
+    }
   }
 }
