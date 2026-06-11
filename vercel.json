@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "buildCommand": "cd client-dashboard-vite && npm run build:vercel",
+  "buildCommand": "cd client-dashboard-vite && npm install --legacy-peer-deps && npm run build:vercel",
   "devCommand": "cd client-dashboard-vite && npm run dev",
   "outputDirectory": "client-dashboard-vite/dist",
   "framework": "vite",
   "nodeVersion": "18",
+  "installCommand": "cd client-dashboard-vite && npm install --legacy-peer-deps",
   "serverless": {
     "minify": true,
     "includeFiles": [
