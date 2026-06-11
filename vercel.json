@@ -110,18 +110,6 @@
       "destination": "/index.html"
     }
   ],
-  "redirects": [
-    {
-      "source": "/dashboard",
-      "destination": "/client-dashboard-vite/index.html",
-      "permanent": true
-    },
-    {
-      "source": "/admin",
-      "destination": "/client-dashboard-vite/index.html",
-      "permanent": true
-    }
-  ],
   "functions": {
     "src/**/*.js": {
       "maxDuration": 10
