@@ -107,7 +107,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/client-dashboard-vite/dist/index.html"
+      "destination": "/index.html"
     }
   ],
   "redirects": [
