@@ -1,14 +1,7 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "client-dashboard-vite/dist"
-      }
-    }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "client-dashboard-vite/dist",
   "rewrites": [
     {
       "source": "/(.*)",
