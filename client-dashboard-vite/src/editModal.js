@@ -1,7 +1,7 @@
-import { updateClient } from './services/clientService.js';
+import { updateClient, updateProfile } from './services/clientService.js';
 import { createInlineError, withButtonLoading, preventDuplicate } from './utils/asyncUtils.js';
 
-export function openEditModal(client, onUpdateSuccess) {
+export function openEditModal(client, activeProfile, onUpdateSuccess) {
   const modalOverlay = document.createElement('div');
   modalOverlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200';
   
@@ -10,12 +10,15 @@ export function openEditModal(client, onUpdateSuccess) {
   
   modalContent.innerHTML = `
     <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-      <h2 class="text-xl font-bold text-gray-900">Edit Client</h2>
+      <h2 class="text-xl font-bold text-gray-900">Edit Profile</h2>
       <button id="close-modal" class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
       </button>
     </div>
     <form id="edit-client-form" class="p-6 space-y-4">
+      <div class="pb-2">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Client Info</h3>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">Client Name</label>
@@ -25,26 +28,36 @@ export function openEditModal(client, onUpdateSuccess) {
           <label class="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
           <input type="text" name="phone" required class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" value="${client.phone}">
         </div>
+      </div>
+      <div class="pt-3 border-t border-gray-100 pb-2">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Profile Details</h3>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">Site Location</label>
-          <input type="text" name="site_location" required class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" value="${client.site_location}">
+          <input type="text" name="site_location" required class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" value="${activeProfile.site_location}">
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">Rate (₹)</label>
-          <input type="number" name="rate" required min="0" step="0.01" class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" value="${client.rate}">
+          <input type="number" name="rate" required min="0" step="0.01" class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" value="${activeProfile.rate}">
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">Quantity</label>
-          <input type="number" name="quantity_value" required min="0" step="0.01" class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" value="${client.quantity_value}">
+          <input type="number" name="quantity_value" required min="0" step="0.01" class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" value="${activeProfile.quantity_value}">
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">Unit</label>
-          <input type="text" name="quantity_type" required class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" value="${client.quantity_type}">
+          <select name="quantity_type" required class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+            <option value="">Select unit</option>
+            ${['RFT', 'Panel', 'RMT', 'Cement', 'Post'].map(t =>
+              `<option value="${t}" ${activeProfile.quantity_type === t ? 'selected' : ''}>${t}</option>`
+            ).join('')}
+          </select>
         </div>
       </div>
       <div>
         <label class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
-        <textarea name="notes" rows="3" class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none">${client.notes || ''}</textarea>
+        <textarea name="notes" rows="3" class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none">${activeProfile.notes || ''}</textarea>
       </div>
       <div id="error-container" class="hidden p-3 rounded-lg bg-red-50 text-red-600 text-sm font-medium border border-red-100"></div>
       <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
@@ -80,18 +93,23 @@ export function openEditModal(client, onUpdateSuccess) {
     errorContainer.hide();
 
     const formData = new FormData(form);
-    const updates = {
+    const clientUpdates = {
       buyer_name: formData.get('buyer_name'),
       phone: formData.get('phone'),
+    };
+
+    const profileUpdates = {
       site_location: formData.get('site_location'),
       rate: parseFloat(formData.get('rate')),
       quantity_value: parseFloat(formData.get('quantity_value')),
       quantity_type: formData.get('quantity_type'),
-      notes: formData.get('notes')
+      notes: formData.get('notes'),
     };
 
-    const updatedClient = await updateClient(client.id, updates, client.updated_at);
-    onUpdateSuccess(updatedClient);
+    const updatedClient = await updateClient(client.id, clientUpdates, client.updated_at);
+    const updatedProfile = await updateProfile(activeProfile.id, profileUpdates, activeProfile.updated_at, client.id);
+
+    onUpdateSuccess(updatedClient, updatedProfile);
     closeModal();
   });
 
