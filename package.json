@@ -4,8 +4,8 @@
     "client-dashboard-vite"
   ],
   "scripts": {
-    "build": "cd client-dashboard-vite && npm run build",
-    "build:vercel": "cd client-dashboard-vite && npm run build:vercel",
+    "build": "cd client-dashboard-vite && npm run build && node -e \"const fs = require('fs'); fs.rmSync('../dist', { recursive: true, force: true }); fs.renameSync('dist', '../dist');\"",
+    "build:vercel": "cd client-dashboard-vite && npm run build:vercel && node -e \"const fs = require('fs'); fs.rmSync('../dist', { recursive: true, force: true }); fs.renameSync('dist', '../dist');\"",
     "deploy:prepare": "cd client-dashboard-vite && npm run deploy:prepare"
   },
   "devDependencies": {
