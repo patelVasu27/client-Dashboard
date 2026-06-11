@@ -1,7 +1,7 @@
 {
   "version": 2,
   "installCommand": "cd client-dashboard-vite && npm install --legacy-peer-deps",
-  "buildCommand": "cd client-dashboard-vite && npx vite build --mode production",
+  "buildCommand": "cd client-dashboard-vite && npm run build",
   "outputDirectory": "client-dashboard-vite/dist",
   "rewrites": [
     {
