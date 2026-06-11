@@ -1,7 +1,5 @@
 {
-  "name": "client-dashboard-vite",
-  "regions": ["us-west-1", "us-east-1", "eu-west-1"],
-
+  "rootDirectory": "client-dashboard-vite",
   "headers": [
     {
       "source": "/(.*)",
@@ -27,42 +25,16 @@
           "value": "max-age=31536000; includeSubDomains; preload"
         },
         {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
           "key": "X-DNS-Prefetch-Control",
           "value": "on"
         }
       ]
     }
   ],
-
-  "routes": [
+  "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/index.html",
-      "statusCode": 200
+      "destination": "/index.html"
     }
-  ],
-
-  "images": {
-    "domains": ["*.supabase.co", "*.vercel.app", "res.cloudinary.com", "images.unsplash.com"]
-  },
-
-  "env": ["VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY", "NODE_ENV"],
-
-  "build": {
-    "command": "npm run build",
-    "nodeVersion": "18"
-  },
-
-  "output": {
-    "directory": "dist",
-    "clean": true
-  },
-
-  "cache": {
-    "static": ["dist/static/**/*.css", "dist/static/**/*.js", "dist/assets/**/*"]
-  }
+  ]
 }
