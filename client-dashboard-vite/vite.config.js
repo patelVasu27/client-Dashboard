@@ -1,6 +1,6 @@
 module.exports = {
   build: {
-    outDir: './dist',
+    outDir: 'dist',
     assetsDir: './',
     rollupOptions: {
       output: {
