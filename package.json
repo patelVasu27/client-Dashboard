@@ -1,4 +1,8 @@
 {
+  "private": true,
+  "workspaces": [
+    "client-dashboard-vite"
+  ],
   "scripts": {
     "build": "cd client-dashboard-vite && npm run build",
     "build:vercel": "cd client-dashboard-vite && npm run build:vercel",
