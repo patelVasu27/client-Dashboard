@@ -149,6 +149,7 @@ client-dashboard-vite/
 - **Package scripts**: `deploy:prepare` for automated deployment
 - **GitHub Actions**: Workflow support (if implemented)
 - **Rollback procedures**: Database and deployment rollback strategies
+- **Vercel configuration**: `vercel.json` for client-side routing support
 
 ### 9. Monitoring & Alerting
 

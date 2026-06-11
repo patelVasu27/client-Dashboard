@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "build": "cd client-dashboard-vite && npm run build",
+    "build:vercel": "cd client-dashboard-vite && npm run build:vercel",
+    "deploy:prepare": "cd client-dashboard-vite && npm run deploy:prepare"
+  },
   "devDependencies": {
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.15",
