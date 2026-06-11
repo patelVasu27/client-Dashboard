@@ -3,8 +3,12 @@ export default {
     outDir: 'dist',
     assetsDir: './',
     rollupOptions: {
+      input: {
+        main: 'index.html',
+        login: 'login.html'
+      },
       output: {
-        entryFileNames: 'index.js',
+        entryFileNames: '[name].js',
         chunkFileNames: '[name].js',
         assetFileNames: '[name].[ext]'
       }
