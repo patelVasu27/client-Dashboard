@@ -3,7 +3,6 @@
   "installCommand": "cd client-dashboard-vite && npm install --legacy-peer-deps",
   "buildCommand": "cd client-dashboard-vite && npx vite build --mode production",
   "outputDirectory": "client-dashboard-vite/dist",
-  "nodeVersion": "18",
   "rewrites": [
     {
       "source": "/((?!assets/).*)",
