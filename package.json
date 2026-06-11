@@ -1,15 +1,18 @@
 {
   "private": true,
+  "workspaces": [
+    "client-dashboard-vite"
+  ],
   "scripts": {
-    "dev": "npm run dev --prefix client-dashboard-vite",
-    "build": "npm run build --prefix client-dashboard-vite",
-    "build:vercel": "npm run build:vercel --prefix client-dashboard-vite",
-    "preview": "npm run preview --prefix client-dashboard-vite",
-    "deploy": "npm run deploy:prepare --prefix client-dashboard-vite",
-    "deploy:prod": "npm run build:vercel --prefix client-dashboard-vite && npx vercel --prod",
-    "lint": "npm run lint --prefix client-dashboard-vite",
-    "typecheck": "npm run typecheck --prefix client-dashboard-vite",
-    "clean": "npm run clean --prefix client-dashboard-vite",
+    "dev": "npm run dev --workspace=client-dashboard-vite",
+    "build": "npm run build --workspace=client-dashboard-vite",
+    "build:vercel": "npm run build:vercel --workspace=client-dashboard-vite",
+    "preview": "npm run preview --workspace=client-dashboard-vite",
+    "deploy": "npm run deploy:prepare --workspace=client-dashboard-vite",
+    "deploy:prod": "npm run build:vercel --workspace=client-dashboard-vite && npx vercel --prod",
+    "lint": "npm run lint --workspace=client-dashboard-vite",
+    "typecheck": "npm run typecheck --workspace=client-dashboard-vite",
+    "clean": "npm run clean --workspace=client-dashboard-vite",
     "perf:check": "npx lhci autorun"
   },
   "devDependencies": {
