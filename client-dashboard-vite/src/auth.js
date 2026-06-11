@@ -34,8 +34,8 @@ async function resolveUserRole(userId) {
     .single();
 
   if (error || !data) {
-    console.warn('Auth guard: failed to resolve role, defaulting to Admin for testing.', error?.message);
-    return 'Admin';
+    console.warn('Auth guard: failed to resolve role, denying access.', error?.message);
+    return null;
   }
 
   // Database stores lowercase 'admin'/'user', UI expects 'Admin'/'User'

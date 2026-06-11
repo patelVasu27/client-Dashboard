@@ -74,7 +74,7 @@ function createNotesContent(notes, canEdit, onSave) {
 }
 
 export function buildClientCard(client, isAdmin, currentUserId, onDelete) {
-  const canEdit = isAdmin || client.created_by === currentUserId;
+  const canEdit = isAdmin;
   const profiles = client.purchase_profiles || [];
   let activeProfileIndex = Math.max(0, profiles.length - 1);
 
@@ -229,7 +229,8 @@ export function buildClientCard(client, isAdmin, currentUserId, onDelete) {
         deleteProfileBtn.textContent = 'Delete Profile';
         deleteProfileBtn.onclick = async (e) => {
           e.stopPropagation();
-          if (!confirm(`Delete purchase profile ${activeProfileIndex + 1} for "${client.buyer_name}"?`)) return;
+          errorMsg.hide();
+          if (!confirm(`Delete purchase profile ${activeProfileIndex + 1} for \"${client.buyer_name}\"?`)) return;
           try {
             const profileId = activeProfile.id;
             await deleteProfile(profileId, client.id);
@@ -243,7 +244,7 @@ export function buildClientCard(client, isAdmin, currentUserId, onDelete) {
             renderFront();
             renderBack();
           } catch (err) {
-            alert(`Failed to delete profile: ${err.message}`);
+            errorMsg.show(`Failed to delete profile: ${err.message}`);
           }
         };
         back.appendChild(deleteProfileBtn);
@@ -253,14 +254,19 @@ export function buildClientCard(client, isAdmin, currentUserId, onDelete) {
       deleteClientBtn.className =
         'w-full py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg font-medium hover:bg-red-100 transition-colors cursor-pointer';
       deleteClientBtn.textContent = 'Delete Client';
+
+      const errorMsg = createInlineError();
+      deleteClientBtn.appendChild(errorMsg.element);
+
       deleteClientBtn.onclick = async (e) => {
         e.stopPropagation();
+        errorMsg.hide();
         if (!confirm('Are you sure you want to delete this client and all their profiles?')) return;
         try {
           await deleteClient(client.id);
           if (onDelete) onDelete(client.id);
         } catch (err) {
-          alert(`Failed to delete: ${err.message}`);
+          errorMsg.show(`Failed to delete: ${err.message}`);
         }
       };
       back.appendChild(deleteClientBtn);

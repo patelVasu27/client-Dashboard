@@ -68,50 +68,41 @@ export const addClient = async (clientData) => {
 
   const authUserId = user.id;
 
-  const { data: client, error } = await supabase
-    .from('clients')
-    .insert({
-      buyer_name: clientData.buyer_name,
-      phone: clientData.phone,
-      site_location: clientData.site_location,
-      rate: clientData.rate,
-      quantity_value: clientData.quantity_value,
-      quantity_type: clientData.quantity_type,
-      notes: clientData.notes || null,
-      created_by: authUserId,
-    })
-    .select()
-    .single();
+  try {
+    const { data: result, error } = await supabase
+      .rpc('create_client_with_profile', {
+        p_buyer_name: clientData.buyer_name,
+        p_phone: clientData.phone,
+        p_site_location: clientData.site_location,
+        p_rate: clientData.rate,
+        p_quantity_value: clientData.quantity_value,
+        p_quantity_type: clientData.quantity_type,
+        p_notes: clientData.notes || null,
+        p_created_by: authUserId,
+      });
 
-  if (error) {
-    console.error('[addClient] Insert failed:', { error, clientData, authUserId });
-    if (error.code === '42501' || error.message.includes('row-level security')) {
-      throw new Error('Permission denied. You can only create clients for your own account.');
+    if (error) {
+      console.error('[addClient] RPC call failed:', error);
+      if (error.code === '42501' || error.message.includes('row-level security')) {
+        throw new Error('Permission denied. You can only create clients for your own account.');
+      }
+      throw new Error(`Failed to create client: ${error.message}`);
     }
-    throw new Error(`Failed to create client: ${error.message}`);
+
+    const client = result?.client;
+    const profile = result?.profile;
+
+    if (!client || !profile) {
+      throw new Error('Invalid response from server.');
+    }
+
+    console.log('[addClient] Client created successfully:', client.id);
+    client.purchase_profiles = [profile];
+    return client;
+  } catch (err) {
+    console.error('[addClient] Transaction failed:', err);
+    throw err;
   }
-
-  const { data: profile, error: profileError } = await supabase
-    .from('purchase_profiles')
-    .insert({
-      client_id: client.id,
-      site_location: clientData.site_location,
-      rate: clientData.rate,
-      quantity_value: clientData.quantity_value,
-      quantity_type: clientData.quantity_type,
-      notes: clientData.notes || null,
-    })
-    .select()
-    .single();
-
-  if (profileError) {
-    console.error('[addClient] Profile insert failed:', profileError);
-    throw new Error(`Failed to create purchase profile: ${profileError.message}`);
-  }
-
-  console.log('[addClient] Client created successfully:', client.id);
-  client.purchase_profiles = [profile];
-  return client;
 };
 
 export const updateClient = async (clientId, updates, lastKnownUpdate) => {

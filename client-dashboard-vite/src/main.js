@@ -11,13 +11,6 @@ async function buildDashboard(authSnapshot) {
   const app = document.getElementById('app');
   app.replaceChildren();
 
-  console.log('DEBUG authSnapshot:', {
-    role: authSnapshot.role,
-    user: authSnapshot.user,
-    userId: authSnapshot.user?.id,
-    session: authSnapshot.session?.user?.id
-  });
-
   const isAdmin = authSnapshot.role === 'Admin';
   const authUser = authSnapshot.user;
   const wrapper = document.createElement('div');
@@ -35,10 +28,12 @@ async function buildDashboard(authSnapshot) {
         </div>
         <div class="flex items-center space-x-4">
           <span class="hidden sm:inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold uppercase tracking-wider">${authSnapshot.role || 'User'}</span>
+          ${isAdmin ? `
           <button id="add-client-btn" class="hidden sm:inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             <span>Register New Client</span>
           </button>
+          ` : ''}
           <button id="logout-btn" class="text-gray-500 hover:text-red-600 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
           </button>
@@ -48,7 +43,10 @@ async function buildDashboard(authSnapshot) {
   `;
   wrapper.appendChild(nav);
   wrapper.querySelector('#logout-btn').onclick = logout;
-  wrapper.querySelector('#add-client-btn').onclick = () => openAddClientModal(handleAddClientSuccess);
+  const addClientBtn = wrapper.querySelector('#add-client-btn');
+  if (addClientBtn) {
+    addClientBtn.onclick = () => openAddClientModal(handleAddClientSuccess);
+  }
 
   const content = document.createElement('div');
   content.className = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full';
