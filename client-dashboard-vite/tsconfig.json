@@ -16,7 +16,7 @@
     "noFallthroughCasesInSwitch": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-    "allowJS": false,
+    "allowJs": false,
     "checkJs": false,
     "noImplicitThis": true,
     "noImplicitOverride": true,
