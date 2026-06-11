@@ -2,14 +2,31 @@
 logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Dependencies
 node_modules/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+!.env.*.example
 
 # Build outputs
 dist/
 dist-ssr/
 .cache/
+.cache
+*.cache
+
+# Test coverage
+coverage
+.nyc_output
+
+# TypeScript
+*.tsbuildinfo
 
 # IDEs and Editors
 .vscode/
@@ -24,3 +41,9 @@ dist-ssr/
 # OS generated files
 Thumbs.db
 desktop.ini
+
+# Temporary files
+*~
+*.swp
+*.swo
+*.

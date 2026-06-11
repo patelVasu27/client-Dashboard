@@ -1,24 +1,37 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
+  "buildCommand": "cd client-dashboard-vite && npm run build:vercel",
+  "devCommand": "cd client-dashboard-vite && npm run dev",
+  "outputDirectory": "client-dashboard-vite/dist",
+  "framework": "vite",
+  "nodeVersion": "18",
+  "serverless": {
+    "minify": true,
+    "includeFiles": [
+      "client-dashboard-vite/public/**/*",
+      "client-dashboard-vite/dist/**/*"
+    ]
+  },
+  "env": {
+    "VITE_SUPABASE_URL": "https://your-project.supabase.co",
+    "VITE_SUPABASE_ANON_KEY": "your-anon-key",
+    "NODE_ENV": "production"
+  },
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, stale-while-revalidate=60"
+        },
+        {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; connect-src 'self' https://*.supabase.co https://*.vercel-analytics.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
+          "value": "default-src 'self'; connect-src 'self' https://*.supabase.co https://*.vercel-analytics.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests;"
         },
         {
           "key": "X-Frame-Options",
-          "value": "DENY"
+          "value": "SAMEORIGIN"
         },
         {
           "key": "X-Content-Type-Options",
@@ -37,6 +50,83 @@
           "value": "on"
         }
       ]
+    },
+    {
+      "source": "/(.*)\.(jpg|jpeg|png|gif|webp|svg|ico|webp)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\.(css|js|ts|tsx|json|wasm)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, stale-while-revalidate=60"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=60, stale-while-revalidate=59"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://your-domain.com"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        }
+      ]
     }
-  ]
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/client-dashboard-vite/dist/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/dashboard",
+      "destination": "/client-dashboard-vite/index.html",
+      "permanent": true
+    },
+    {
+      "source": "/admin",
+      "destination": "/client-dashboard-vite/index.html",
+      "permanent": true
+    }
+  ],
+  "functions": {
+    "src/**/*.js": {
+      "maxDuration": 10
+    }
+  },
+  "experimental": {
+    "skipMiddlewareBodyParsing": true
+  }
 }
