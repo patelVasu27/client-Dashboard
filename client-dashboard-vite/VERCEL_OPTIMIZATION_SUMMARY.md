@@ -150,6 +150,7 @@ client-dashboard-vite/
 - **GitHub Actions**: Workflow support (if implemented)
 - **Rollback procedures**: Database and deployment rollback strategies
 - **Vercel configuration**: `vercel.json` for client-side routing support
+- **Build verification**: `VERIFICATION_SCRIPT.md` for deployment validation
 
 ### 9. Monitoring & Alerting
 
