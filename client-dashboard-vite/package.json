@@ -25,8 +25,8 @@
     "@supabase/supabase-js": "^2.107.0"
   },
   "engines": {
-    "node": "v18 || >=20",
-    "npm": "9.0.0 || >=10"
+    "node": ">=20.19.0",
+    "npm": ">=10.0.0"
   },
   "browserslist": {
     "production": [

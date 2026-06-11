@@ -15,6 +15,9 @@
     "clean": "npm run clean --workspace=client-dashboard-vite",
     "perf:check": "npx lhci autorun"
   },
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "devDependencies": {
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.15",
