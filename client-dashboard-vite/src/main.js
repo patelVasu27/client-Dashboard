@@ -42,7 +42,7 @@ async function buildDashboard(authSnapshot) {
     </div>
   `;
   wrapper.appendChild(nav);
-  wrapper.querySelector('#logout-btn').onclick = logout;
+  wrapper.querySelector('#logout-btn').onclick = () => logout();
   const addClientBtn = wrapper.querySelector('#add-client-btn');
   if (addClientBtn) {
     addClientBtn.onclick = () => openAddClientModal(handleAddClientSuccess);

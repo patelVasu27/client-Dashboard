@@ -127,6 +127,7 @@ export function getAuthState() {
 }
 
 function isSafeLocalUrl(url) {
+  if (typeof url !== 'string') return false;
   try {
     const parsed = new URL(url, window.location.origin);
     return parsed.origin === window.location.origin;
@@ -198,6 +199,7 @@ export function guardPage(options = {}) {
  * Sign out and redirect to login.
  */
 export async function logout(redirectTo = '/login.html') {
+  const target = isSafeLocalUrl(redirectTo) ? redirectTo : '/login.html';
   await supabase.auth.signOut();
-  window.location.replace(isSafeLocalUrl(redirectTo) ? redirectTo : '/login.html');
+  window.location.replace(target);
 }
