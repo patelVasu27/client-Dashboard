@@ -30,6 +30,10 @@ export function openAddProfileModal(clientId, onSuccess) {
           <input type="number" name="quantity_value" required min="0" step="0.01" class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="0.00">
         </div>
         <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Grand Total (₹)</label>
+          <input type="text" name="grand_total" readonly class="w-full rounded-lg border-gray-100 bg-gray-50 border p-2.5 text-sm font-bold text-blue-600 outline-none transition-all cursor-not-allowed" placeholder="0.00">
+        </div>
+        <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">Unit</label>
           <select name="quantity_type" required class="w-full rounded-lg border-gray-300 border p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
             <option value="">Select unit</option>
@@ -64,6 +68,19 @@ export function openAddProfileModal(clientId, onSuccess) {
   const submitBtn = modalContent.querySelector('#submit-add-profile');
   const closeBtn = modalContent.querySelector('#close-add-profile');
   const cancelBtn = modalContent.querySelector('#cancel-add-profile');
+
+  const rateInput = form.querySelector('input[name="rate"]');
+  const qtyInput = form.querySelector('input[name="quantity_value"]');
+  const totalInput = form.querySelector('input[name="grand_total"]');
+
+  const updateGrandTotal = () => {
+    const rate = parseFloat(rateInput.value) || 0;
+    const qty = parseFloat(qtyInput.value) || 0;
+    totalInput.value = (rate * qty).toFixed(2);
+  };
+
+  rateInput.addEventListener('input', updateGrandTotal);
+  qtyInput.addEventListener('input', updateGrandTotal);
 
   const closeModal = () => {
     modalOverlay.classList.replace('fade-in', 'fade-out');
